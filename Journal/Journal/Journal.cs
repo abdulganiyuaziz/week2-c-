@@ -4,29 +4,28 @@ using System.IO;
 
 public class Journal
 {
-    public List<Entry> _entries = new List<Entry>();
+    private List<Entry> _entries = new List<Entry>();
 
-    public void AddEntry(Entry newEntry)
+    public void AddEntry(Entry entry)
     {
-        _entries.Add(newEntry);
+        _entries.Add(entry);
     }
 
     public void DisplayAll()
     {
         foreach (Entry entry in _entries)
         {
-            entry.Display();
+            Console.WriteLine(entry.GetDisplayText());
         }
     }
 
     public void SaveToFile(string filename)
     {
-        using (StreamWriter outputFile = new StreamWriter(filename))
+        using (StreamWriter writer = new StreamWriter(filename))
         {
             foreach (Entry entry in _entries)
             {
-                // Using | as a separator
-                outputFile.WriteLine($"{entry._date}|{entry._promptText}|{entry._entryText}");
+                writer.WriteLine(entry.ToFileString());
             }
         }
     }
@@ -41,11 +40,11 @@ public class Journal
         {
             string[] parts = line.Split("|");
 
-            Entry entry = new Entry();
-            entry._date = parts[0];
-            entry._promptText = parts[1];
-            entry._entryText = parts[2];
+            string date = parts[0];
+            string prompt = parts[1];
+            string response = parts[2];
 
+            Entry entry = new Entry(date, prompt, response);
             _entries.Add(entry);
         }
     }
